@@ -1,5 +1,6 @@
 import axios from "axios";
 import NextAuth, { NextAuthOptions } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import querystring from 'query-string';
 // import AppleProvider from "next-auth/providers/apple"
 // import EmailProvider from "next-auth/providers/email"
@@ -10,15 +11,15 @@ export const authOptions: NextAuthOptions = {
   // https://next-auth.js.org/configuration/providers/oauth
   providers: [
     {
-      id: "myKey",
-      name: "Paul's Key",
+      id: "oidc",
+      name: "OIDC",
       type: "oauth",
       wellKnown: "http://localhost:3255/auth/realms/DevRealm/.well-known/openid-configuration",
       authorization: { params: { scope: "openid email profile recipe_management" } },
       idToken: true,
       checks: ["pkce", "state"],
-        clientId: "recipe_management.next",
-        clientSecret: "974d6f71-d41b-4601-9a7a-a33081f82188",
+      clientId: "recipe_management.next",
+      clientSecret: "974d6f71-d41b-4601-9a7a-a33081f82188",
       profile(profile) {
         return {
           id: profile.sub,
@@ -44,9 +45,6 @@ export const authOptions: NextAuthOptions = {
         );
       } catch (e) { }
     },
-  },
-  theme: {
-    colorScheme: "light",
   },
   callbacks: {
     async jwt({ token, user, account }) {
@@ -76,6 +74,34 @@ export const authOptions: NextAuthOptions = {
       return session
     },
   },
+  cookies:{
+    sessionToken: {
+      name: `__Secure-next-auth.session-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: true
+      }
+    },
+    callbackUrl: {
+      name: `__Secure-next-auth.callback-url`,
+      options: {
+        sameSite: 'lax',
+        path: '/',
+        secure: true
+      }
+    },
+    csrfToken: {
+      name: `__Host-next-auth.csrf-token`,
+      options: {
+        httpOnly: true,
+        sameSite: 'lax',
+        path: '/',
+        secure: true
+      }
+    },
+  }
 }
 
 /**
@@ -83,16 +109,15 @@ export const authOptions: NextAuthOptions = {
  * `accessToken` and `accessTokenExpires`. If an error occurs,
  * returns the old token and an error property
  */
- async function refreshAccessToken(token) {
+ async function refreshAccessToken(token: JWT) {
   try {
-    const url =
-      "http://localhost:3255/auth/realms/DevRealm/protocol/openid-connect/token?" +
-      new URLSearchParams({
-        client_secret: '974d6f71-d41b-4601-9a7a-a33081f82188',
-        client_id: 'recipe_management.next',
-        grant_type: "refresh_token",
-        refresh_token: token.refreshToken,
-      })
+    var params = querystring.stringify({
+      client_secret: '974d6f71-d41b-4601-9a7a-a33081f82188',
+      client_id: 'recipe_management.next',
+      grant_type: "refresh_token",
+      refresh_token: token.refreshToken,
+  });
+    const url = `http://localhost:3255/auth/realms/DevRealm/protocol/openid-connect/token?${params}`;
 
     const response = await fetch(url, {
       headers: {
