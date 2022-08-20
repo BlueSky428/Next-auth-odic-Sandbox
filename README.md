@@ -37,7 +37,7 @@ NextAuth.js is an easy to implement, full-stack (client/server) open source auth
 
 Go to [next-auth.js.org](https://next-auth.js.org) for more information and documentation.
 
-> *NextAuth.js is not officially associated with Vercel or Next.js.*
+> _NextAuth.js is not officially associated with Vercel or Next.js._
 
 ## Getting Started
 
@@ -49,7 +49,29 @@ cd next-auth-example
 npm install
 ```
 
+### 1a. Pulumi:
+
+        var recipeManagementNextClient = ClientFactory.CreateCodeFlowClient(realm.Id,
+            "recipe_management.next",
+            "974d6f71-d41b-4601-9a7a-a33081f82188",
+            "RecipeManagement Next",
+            "http://localhost:8582",
+            redirectUris: new InputList<string>()
+            {
+                "http://localhost:8582/*"
+            },
+            webOrigins: new InputList<string>()
+            {
+                "https://localhost:5375",
+                "http://localhost:8582",
+            }
+        );
+        recipeManagementNextClient.ExtendDefaultScopes(recipemanagementScope.Name);
+        recipeManagementNextClient.AddAudienceMapper("recipe_management");
+
 ### 2. Configure your local environment
+
+** Paul Note** Do this when you clone down
 
 Copy the .env.local.example file in this directory to .env.local (which will be ignored by Git):
 
@@ -67,7 +89,7 @@ You **can** skip configuring a database and come back to it later if you want.
 
 For more information about setting up a database, please check out the following links:
 
-* Docs: [next-auth.js.org/adapters/overview](https://next-auth.js.org/adapters/overview)
+- Docs: [next-auth.js.org/adapters/overview](https://next-auth.js.org/adapters/overview)
 
 ### 3. Configure Authentication Providers
 
@@ -75,9 +97,9 @@ For more information about setting up a database, please check out the following
 
 2. When setting up OAuth, in the developer admin page for each of your OAuth services, you should configure the callback URL to use a callback path of `{server}/api/auth/callback/{provider}`.
 
-  e.g. For Google OAuth you would use: `http://localhost:3000/api/auth/callback/google`
+e.g. For Google OAuth you would use: `http://localhost:3000/api/auth/callback/google`
 
-  A list of configured providers and their callback URLs is available from the endpoint `/api/auth/providers`. You can find more information at https://next-auth.js.org/configuration/providers/oauth
+A list of configured providers and their callback URLs is available from the endpoint `/api/auth/providers`. You can find more information at https://next-auth.js.org/configuration/providers/oauth
 
 3. You can also choose to specify an SMTP server for passwordless sign in via email.
 
@@ -110,4 +132,3 @@ Follow the [Deployment documentation](https://next-auth.js.org/deployment)
 ## License
 
 ISC
-
