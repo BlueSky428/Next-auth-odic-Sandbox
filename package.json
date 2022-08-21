@@ -19,7 +19,7 @@
   ],
   "dependencies": {
     "axios": "^0.27.2",
-    "next": "latest",
+    "next": "12.2.5",
     "next-auth": "latest",
     "nodemailer": "^6",
     "query-string": "^7.1.1",

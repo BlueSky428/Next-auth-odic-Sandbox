@@ -1,5 +1,6 @@
-import Layout from "../components/layout"
+import Layout from "../components/layout";
 
+IndexPage.isPublic = true;
 export default function IndexPage() {
   return (
     <Layout>
@@ -9,5 +10,5 @@ export default function IndexPage() {
         <a href="https://next-auth.js.org">NextAuth.js</a> for authentication.
       </p>
     </Layout>
-  )
+  );
 }
