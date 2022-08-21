@@ -3,7 +3,6 @@ import "./styles.css";
 
 import type { AppProps } from "next/app";
 import { useEffect, useState } from "react";
-import AccessDenied from "../components/access-denied";
 
 // Use of the <SessionProvider> is mandatory to allow components that call
 // `useSession()` anywhere in your application to access the `session` object.
@@ -27,7 +26,10 @@ function RouteGuard({ children, isPublic = false }: RouteGuardProps) {
   if (isPublic) return <>{children}</>;
 
   if (typeof window !== undefined && isLoading) return null;
-  if (!isLoggedIn) return <AccessDenied />;
+  if (!isLoggedIn) {
+    signIn("oidc");
+    return null;
+  }
 
   return <>{children}</>;
 }
